@@ -21,3 +21,26 @@ D:\Users\Mark Garcia\Desktop\CSULB\Y4 S2\CECS 342\HW4-UpToInterpretation\HW4\hw4
 D:\Users\Mark Garcia\Desktop\CSULB\Y4 S2\CECS 342\HW4-UpToInterpretation\HW4\hw4\obj\Debug\hw4.fsproj.CopyComplete
 D:\Users\Mark Garcia\Desktop\CSULB\Y4 S2\CECS 342\HW4-UpToInterpretation\HW4\hw4\obj\Debug\hw4.exe
 D:\Users\Mark Garcia\Desktop\CSULB\Y4 S2\CECS 342\HW4-UpToInterpretation\HW4\hw4\obj\Debug\hw4.pdb
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\hw4.xml
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\obj\Debug\hw4.exe
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\obj\Debug\hw4.pdb
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\hw4.exe
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\hw4.pdb
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\FSharp.Core.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\FSharp.Core.xml
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\cs\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\de\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\en\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\es\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\fr\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\it\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\ja\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\ko\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\pl\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\pt-BR\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\ru\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\tr\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\zh-Hans\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\bin\Debug\zh-Hant\FSharp.Core.resources.dll
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\obj\Debug\hw4.fsprojAssemblyReference.cache
+C:\Users\milk8\Desktop\CSULB\CECS 342\CECS-342-Interpreter\HW4\hw4\obj\Debug\hw4.fsproj.CopyComplete

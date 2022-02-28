@@ -70,6 +70,14 @@ let rec interpret state =
     | PrintExpr expr -> evaluate expr |> printfn "%.2f"
     | Branch (con, s1, s2) -> if (testConditon con) then interpret s1 else interpret s2
     | Repeat (i, s1) -> for j = 0 to i-1 do interpret s1
+    
+printf "Enter a float: "
+let input1 = Console.ReadLine() |> Input
+printf "Enter another float: "
+let input2 = Console.ReadLine() |> Input
+
+let testS = Branch ( And ( Equals ( Const 0.0, input1), Not (Equals ( Const 0.0, input2))), PrintStr("Good"), PrintStr("Bad"))
+interpret testS
 
 //// Test the input expression
 //let x = Console.ReadLine() |> Input
@@ -88,8 +96,8 @@ let rec interpret state =
 //|> printfn "%b"
 
 
-let y = Repeat(3 , PrintStr "Hello World")
-interpret y
+// let y = Repeat(3 , PrintStr "Hello World")
+// interpret y
 // Ugly print the expression.
 // let demo1 = Neg (Div (Pow (Const 2.0, Sqrt (Mult (Const 11.0, (Sub (Add (Const 10.0, Const 3.0), Const 2.0))))), Const 2.0))
 // printfn "%O\n" demo1

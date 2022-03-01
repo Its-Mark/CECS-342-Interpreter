@@ -28,7 +28,7 @@ let rec evaluate expr =
     | Div (expr1, expr2) -> (evaluate expr1) / (evaluate expr2)
     | Sqrt expr1 -> Math.Sqrt (evaluate expr1)
     | Pow (expr1, expr2) -> (evaluate expr1) ** (evaluate expr2)
-    | Input s -> float s 
+    | Input s -> printf "%s" s; Console.ReadLine() |> float
 
 // format expression
 let rec formatExpression expr =
@@ -71,14 +71,13 @@ let rec interpret state =
     | Branch (con, s1, s2) -> if (testConditon con) then interpret s1 else interpret s2
     | Repeat (i, s1) -> for j = 0 to i-1 do interpret s1
     
-printf "Enter a float: "
-let input1 = Console.ReadLine() |> Input
-printf "Enter another float: "
-let input2 = Console.ReadLine() |> Input
-
-let testS = Branch ( And ( Equals ( Const 0.0, input1), Not (Equals ( Const 0.0, input2))), PrintStr("Good"), PrintStr("Bad"))
-interpret testS
-
+let cmpFloat = Equals (Const 0.0, Input "Enter a float: ")
+let raisePwer = PrintExpr (Pow ( Input "Enter a base: ", Input "Enter an exponent: "))
+let prog =
+    Branch ( cmpFloat, PrintStr "Good Job", Branch ( Not (cmpFloat), PrintStr "Good Job", Repeat (3, raisePwer)))
+prog
+|> interpret
+    
 //// Test the input expression
 //let x = Console.ReadLine() |> Input
 //let demoInput = Add( Const 5.0, x)

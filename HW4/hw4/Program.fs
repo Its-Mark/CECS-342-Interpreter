@@ -69,7 +69,7 @@ let rec interpret state =
     | PrintStr str -> printfn "%s" str
     | PrintExpr expr -> evaluate expr |> printfn "%.2f"
     | Branch (con, s1, s2) -> if (testConditon con) then interpret s1 else interpret s2
-    | Repeat (i, s1) -> for j = 0 to i-1 do interpret s1
+    | Repeat (i, s1) -> if i = 0 then interpret Noop else interpret s1; interpret (Repeat (i-1, s1) )
     
 let cmpFloat = Equals (Const 0.0, Input "Enter a float: ")
 let raisePwer = PrintExpr (Pow ( Input "Enter a base: ", Input "Enter an exponent: "))

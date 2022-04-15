@@ -1,5 +1,7 @@
-
 open System
+open System.Runtime.InteropServices
+open Microsoft.FSharp.Collections
+
 
 // This is a very basic math interpreter, using unions to discriminate between 
 // expression operators.
@@ -16,45 +18,50 @@ type Expression =
     | Sqrt of Expression
     | Pow of Expression * Expression
     | Input of String
+    | Mod of Expression * Expression
+    | Var of String
    
 // evaluate converts an Expression object into the floating-point number it represents.
-let rec evaluate expr =
+let rec evaluate expr state =
     match expr with 
     | Const c -> c
-    | Add (expr1, expr2) -> (evaluate expr1) + (evaluate expr2)
-    | Sub (expr1, expr2) -> (evaluate expr1) - (evaluate expr2)
-    | Neg expr1 -> (evaluate expr1) * -1.0
-    | Mult (expr1, expr2) -> (evaluate expr1) * (evaluate expr2)
-    | Div (expr1, expr2) -> (evaluate expr1) / (evaluate expr2)
-    | Sqrt expr1 -> Math.Sqrt (evaluate expr1)
-    | Pow (expr1, expr2) -> (evaluate expr1) ** (evaluate expr2)
+    | Add (expr1, expr2) -> (evaluate expr1 state) + (evaluate expr2 state)
+    | Sub (expr1, expr2) -> (evaluate expr1 state) - (evaluate expr2 state)
+    | Neg expr1 -> (evaluate expr1 state) * -1.0
+    | Mult (expr1, expr2) -> (evaluate expr1 state) * (evaluate expr2 state)
+    | Div (expr1, expr2) -> (evaluate expr1 state) / (evaluate expr2 state)
+    | Sqrt expr1 -> Math.Sqrt (evaluate expr1 state)
+    | Pow (expr1, expr2) -> (evaluate expr1 state) ** (evaluate expr2 state)
     | Input s -> printf "%s" s; Console.ReadLine() |> float
-
+    | Mod (expr1, expr2) -> (evaluate expr1 state) % (evaluate expr2 state)
+    | Var v -> state |> Map.find v
+    
 // format expression
-let rec formatExpression expr =
+let rec formatExpression expr state=
     match expr with 
     | Const c -> sprintf "%.2f" c
-    | Add (expr1, expr2) -> sprintf "(%s + %s)" (formatExpression expr1) (formatExpression expr2)
-    | Sub (expr1, expr2) -> sprintf "(%s - %s)" (formatExpression expr1) (formatExpression expr2)
-    | Neg expr1 -> sprintf "(%s * -1)" (formatExpression expr1)
-    | Mult (expr1, expr2) -> sprintf "(%s * %s)" (formatExpression expr1) (formatExpression expr2)
-    | Div (expr1, expr2) -> sprintf "(%s / %s)" (formatExpression expr1) (formatExpression expr2)
-    | Sqrt expr1 -> sprintf "(sqrt(%s))" (formatExpression expr1)
-    | Pow (expr1, expr2) -> sprintf "(%s ** %s)" (formatExpression expr1) (formatExpression expr2)
+    | Add (expr1, expr2) -> sprintf "(%s + %s)" (formatExpression expr1 state) (formatExpression expr2 state)
+    | Sub (expr1, expr2) -> sprintf "(%s - %s)" (formatExpression expr1 state) (formatExpression expr2 state)
+    | Neg expr1 -> sprintf "(%s * -1)" (formatExpression expr1 state)
+    | Mult (expr1, expr2) -> sprintf "(%s * %s)" (formatExpression expr1 state) (formatExpression expr2 state)
+    | Div (expr1, expr2) -> sprintf "(%s / %s)" (formatExpression expr1 state) (formatExpression expr2 state)
+    | Sqrt expr1 -> sprintf "(sqrt(%s))" (formatExpression expr1 state)
+    | Pow (expr1, expr2) -> sprintf "(%s ** %s)" (formatExpression expr1 state) (formatExpression expr2 state)
     | Input s -> sprintf "%.2f" (float s)
-
+    | Mod (expr1, expr2) -> sprintf "(%s mod %s)" (formatExpression expr1 state) (formatExpression expr2 state)
+    | Var v -> sprintf "(%s = %f)" v (state |> Map.find v)
 type Condition =
     | Equals of Expression * Expression
     | And of Condition * Condition
     | Or of Condition * Condition
     | Not of Condition
 
-let rec testConditon con =
+let rec testCondition con state=
     match con with
-    | Equals (expr1, expr2) -> evaluate expr1 = evaluate expr2
-    | And (con1, con2) -> testConditon con1 && testConditon con2
-    | Or (con1, con2) -> testConditon con1 || testConditon con2
-    | Not con1 -> testConditon con1 |> not
+    | Equals (expr1, expr2) -> evaluate expr1 state = evaluate expr2 state
+    | And (con1, con2) -> testCondition con1 state && testCondition con2 state
+    | Or (con1, con2) -> testCondition con1 state || testCondition con2 state
+    | Not con1 -> testCondition con1 state |> not 
     
 type Statement =
     | Noop
@@ -62,21 +69,62 @@ type Statement =
     | PrintExpr of Expression
     | Branch of Condition * Statement * Statement
     | Repeat of int * Statement
+    | Set of string * Expression
+    //| While of Condition * Statement list
     
-let rec interpret state =
+let rec interpret state iState=
     match state with
-    | Noop -> ()
-    | PrintStr str -> printfn "%s" str
-    | PrintExpr expr -> evaluate expr |> printfn "%.2f"
-    | Branch (con, s1, s2) -> if (testConditon con) then interpret s1 else interpret s2
-    | Repeat (i, s1) -> if i = 0 then interpret Noop else interpret s1; interpret (Repeat (i-1, s1) )
-    
-let cmpFloat = Equals (Const 0.0, Input "Enter a float: ")
-let raisePwer = PrintExpr (Pow ( Input "Enter a base: ", Input "Enter an exponent: "))
-let prog =
-    Branch ( cmpFloat, PrintStr "Good Job", Branch ( Not (cmpFloat), PrintStr "Good Job", Repeat (3, raisePwer)))
-prog
-|> interpret
+    | Noop -> (); iState
+    | PrintStr str -> printfn "%s" str; iState
+    | PrintExpr expr -> (evaluate expr iState) |> printfn "%.2f"; iState
+    | Branch (con, sList1, sList2) -> if (testCondition con iState) then interpretProgram sList1 iState else interpretProgram sList2 iState |> ignore; iState
+    | Repeat (i, sList1) -> if i = 0 then interpret Noop iState else interpretProgram sList1 iState |> ignore; interpret (Repeat (i-1, sList1)) iState |> ignore; iState
+    | Set (v, expr) -> iState |> Map.add v (evaluate expr iState)
+    //| While (con, sList) -> if (testCondition con iState) then interpretPro; interpret (While (con, sList)) |> ignore; iState
+
+and interpretProgram statementList currentState =
+    for item in statementList do
+        ans <- interpret item currentState
+        
+let initialState = Map.ofList [("x", 4.0)]  // hard-code a starting state of x=4.
+let myProgram = [
+  Set ("x", Add (Const 1.0, Var "x"));
+  PrintExpr (Var "x");
+  Set ("x", Const 0.0);
+  PrintExpr (Var "x")
+]
+let programResult =
+  initialState
+  |> interpret (Set ("x", Add (Const 1.0, Var "x")))
+  |> interpret (PrintExpr (Var "x"))
+  |> interpret (Set ("x", Const 0.0))
+  |> interpret (PrintExpr (Var "x"))
+  |> printfn "%O"
+
+
+(*
+EVERYTHING BELOW THIS COMMENT WORKS
+
+
+
+let initialState = Map.ofList [("x", 4.0)]  // hard-code a starting state of x=4.
+let statement = Set ("x", Add (Const 1.0, Var "x"))
+interpret statement initialState |> printfn "%O"
+
+let initialState = Map.ofList [("x", 4.0)]  // hard-code a starting state of x=4.
+let statement = PrintExpr (Add (Const 1.0, Var "x"))
+interpret statement initialState |> printfn "%O"
+
+//let state = Map.ofList [("x", 4.0)]  // hard-code a starting state of x=4.
+//let expr = Add (Const 1.0, Var "x")
+//evaluate expr state |> printfn "%f"
+   
+//let cmpFloat = Equals (Const 0.0, Input "Enter a float: ")
+//let raisePwer = PrintExpr (Pow ( Input "Enter a base: ", Input "Enter an exponent: "))
+//let prog =
+//    Branch ( cmpFloat, PrintStr "Good Job", Branch ( Not (cmpFloat), PrintStr "Good Job", Repeat (3, raisePwer)))
+//prog
+//|> interpret
     
 //// Test the input expression
 //let x = Console.ReadLine() |> Input
@@ -91,7 +139,7 @@ prog
 //// Test the condition union
 //let demoCon = Not (Equals( Const 5.0, x))
 //demoCon
-//|> testConditon
+//|> testCondition
 //|> printfn "%b"
 
 
@@ -114,7 +162,7 @@ prog
 // a = 1, b = -5, c = 4
 // use our "language" to solve the quad formula
 
-(*printfn("For the quadratic function: x**2 - 5x + 4\nThe answers are: ")
+printfn("For the quadratic function: x**2 - 5x + 4\nThe answers are: ")
 let a = Const 1.0
 let b = Const -5.0
 let c = Const 4.0
@@ -132,7 +180,9 @@ minus
 |> printfn "%s"
 minus
 |> evaluate
-|> printfn "x = %.2f"*)
+|> printfn "x = %.2f"
+
+*)
 
 
 
